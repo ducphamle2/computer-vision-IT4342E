@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 To start the project in develop mode, run the following command:
 ```
-python ocr_anime/main.py
+python ocr_manga/main.py
 ```
 
 ## Run with docker

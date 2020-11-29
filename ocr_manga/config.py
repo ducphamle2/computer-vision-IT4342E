@@ -10,7 +10,7 @@ class Config:
     CLIENT_MAX_SIZE = 40 * 1024 ** 2
 
 
-class OCRAnimeConfig:
+class OCRMangaConfig:
     CORE_DATA_DIR = '{}/{}/{}'.format(basedir,
                                       'artificial_intelligence', 'core_data')
     MODEL_VERSION = 1

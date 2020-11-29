@@ -4,7 +4,7 @@ WORKDIR /
 
 COPY requirements.txt .
 
-COPY ./ocr_anime .
+COPY ./ocr_manga .
 
 RUN pip install --no-cache-dir -r requirements.txt
 

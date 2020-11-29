@@ -7,7 +7,7 @@ from includes.utils import *
 from const.message import *
 from config import *
 from errors import *
-from artificial_intelligence.ocr_anime.handler import OCRAnimeHandler
+from artificial_intelligence.ocr_manga.handler import OCRMangaHandler
 
 LOGGER = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 class RouteHandler:
 
     def __init__(self):
-        self.ocr_anime_translator = OCRAnimeHandler()
+        self.ocr_manga_translator = OCRMangaHandler()
 
     async def translate(self, request):
         data = await request.post()
@@ -30,7 +30,7 @@ class RouteHandler:
         uploaded_image_content = user_image.read()
 
         time_stamp = int(time.time())
-        images_directory = f'{OCRAnimeConfig.CORE_DATA_DIR}/db'
+        images_directory = f'{OCRMangaConfig.CORE_DATA_DIR}/db'
 
         # store face images
         file_name = f'{time_stamp}.jpg'
