@@ -1,11 +1,11 @@
-# computer-vision-IT4342E
+# COMPUTER-VISION-IT4342E
 Computer Vision midterm project ICT-01.K61 
 
-### OCR, and why this project is an OCR system: 
+### OCR AND WHY OCR
 
 Because we need to extract texts from a 2D image into a text form that the machine can understand before translating into a different language. Finally, we need to transform such information back into the image text representation. The whole process has all properties of an OCR system, where it contains several subprocesses including localizing text, character segmentation and recognition. We also need to have some image pre-processing and post-processing steps as well.
 
-### Tools and libraries needed to complete the project
+### TOOLS AND LIBRARIES NEEDED TO DEVELOP THE MODEL
 
 **a)**: [SickZil-Machine](https://github.com/KUR-creative/SickZil-Machine) - an open source helper tool that automates text removal from conversation text boxes of manga/comics. This is a preprocessing step which uses Neural network to process the images (need to understand this) => use tensorflow.
 
@@ -19,7 +19,7 @@ Because we need to extract texts from a 2D image into a text form that the machi
 
 **f)**: Other libraries to support the project such as matplotlib, numpy, textwrap, ...
 
-### Flow to run the project:
+### FLOW TO DEVELOP THE MODEL
 
 **1)**: Import neccessary tools and libraries
 
@@ -34,3 +34,29 @@ Because we need to extract texts from a 2D image into a text form that the machi
 **6)**: Translate the collected texts
 
 **7)**: Draw the text
+
+### RUN THE PROJECT USING DOCKER
+
+## Run with python
+
+To install the dependencies:
+```
+pip install -r requirements.txt
+```
+
+To start the project in develop mode, run the following command:
+```
+python ocr_anime/main.py
+```
+
+## Run with docker
+
+Build an image
+```
+docker build
+```
+
+To start the project in develop mode, run the following command:
+```
+docker run --name ocr_container -p 8080:8080
+```
