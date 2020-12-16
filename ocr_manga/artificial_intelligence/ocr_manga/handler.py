@@ -1,6 +1,4 @@
-
-
 class OCRMangaHandler:
 
     def __init__(self):
-        print("abc")
+        print("abc")        
