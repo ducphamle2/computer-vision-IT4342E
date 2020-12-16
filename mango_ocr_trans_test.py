@@ -53,7 +53,7 @@ from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 
 #########################################working dir
 cwd = os.getcwd()
-mainTempFolder=os.path.join(cwd, "tmp/tmp_images/")
+mainTempFolder=os.path.join(cwd, "ocr_manga/tmp/tmp_images/")
 textOnlyFolder=os.path.join(mainTempFolder, "textOnly/")
 inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")
 transalatedFolder=os.path.join(mainTempFolder, "translated/")
