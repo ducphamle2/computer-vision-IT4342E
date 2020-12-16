@@ -30,7 +30,6 @@ from matplotlib import pyplot as plt
 import re                 #regex       
 from pdb import set_trace   #debug
 import numpy as np
-from IPython.display import display
 
 selectedLang = 'vietnamese'
 
@@ -87,6 +86,7 @@ def imgpath2mask(imgpath):
 for i,imgPath in enumerate(tqdm(downloadFileList)):
     fileName=os.path.basename(imgPath)
     oriImage = imgio.load(imgPath, imgio.IMAGE)                      #ori image
+    # imgpath2mask(imgPath)
     # mask image is a black image with features (text) being white
     maskImage  = imgio.mask2segmap(imgpath2mask(imgPath))            #mask image
     # remove all the text from the original image
@@ -309,5 +309,5 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     #display
     if i==0:
       im_oriText=drawText(inpaintedFolder+fileName,rect,textListDict[fileName],"ru",break_long_words=True)
-      display(im_oriText)
-      display(im)
+      cv2.imshow("original img", im_oriText)
+      cv2.imshow("translated img", im)

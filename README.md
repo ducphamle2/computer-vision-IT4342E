@@ -37,9 +37,14 @@ Because we need to extract texts from a 2D image into a text form that the machi
 
 ## Test the mango_ocr_trans file
 
+Install libraries and set up the project
 ```
 ./init.sh
 ```
+
+Install tensorflow gpu using conda
+conda create -n <my_env> tensorflow-gpu
+conda activate <my_env>
 
 ```
 python mango_ocr_trans_test.py
