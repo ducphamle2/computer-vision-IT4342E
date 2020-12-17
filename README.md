@@ -5,7 +5,7 @@ Computer Vision midterm project ICT-01.K61
 
 Because we need to extract texts from a 2D image into a text form that the machine can understand before translating into a different language. Finally, we need to transform such information back into the image text representation. The whole process has all properties of an OCR system, where it contains several subprocesses including localizing text, character segmentation and recognition. We also need to have some image pre-processing and post-processing steps as well.
 
-### TOOLS AND LIBRARIES NEEDED TO DEVELOP THE MODEL
+### TOOLS AND LIBRARIES NEEDED TO DEVELOP THE PROJECT
 
 **a)**: [SickZil-Machine](https://github.com/KUR-creative/SickZil-Machine) - an open source helper tool that automates text removal from conversation text boxes of manga/comics. This is a preprocessing step which uses Neural network to process the images (need to understand this) => use tensorflow.
 
@@ -19,7 +19,7 @@ Because we need to extract texts from a 2D image into a text form that the machi
 
 **f)**: Other libraries to support the project such as matplotlib, numpy, textwrap, ...
 
-### FLOW TO DEVELOP THE MODEL
+### FLOW TO DEVELOP THE PROJECT
 
 **1)**: Import neccessary tools and libraries
 
@@ -35,7 +35,20 @@ Because we need to extract texts from a 2D image into a text form that the machi
 
 **7)**: Draw the text
 
-### RUN THE PROJECT USING DOCKER
+## Test the mango_ocr_trans file
+
+Install libraries and set up the project
+```
+./init.sh
+```
+
+Install tensorflow gpu using conda
+conda create -n <my_env> tensorflow-gpu
+conda activate <my_env>
+
+```
+python mango_ocr_trans_test.py
+```
 
 ## Run with python
 
