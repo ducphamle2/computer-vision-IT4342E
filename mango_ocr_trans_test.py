@@ -84,8 +84,8 @@ def imgpath2mask(imgpath):
         imgio.segmap2mask)
 
 for i,imgPath in enumerate(tqdm(downloadFileList)):
-    fileName=os.path.basename(imgPath)
-    oriImage = imgio.load(imgPath, imgio.IMAGE)                      #ori image
+    fileName = os.path.basename(imgPath)
+    oriImage = imgio.load(imgPath, imgio.IMAGE)  #ori image
     # imgpath2mask(imgPath)
     # mask image is a black image with features (text) being white
     maskImage  = imgio.mask2segmap(imgpath2mask(imgPath))            #mask image

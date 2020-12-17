@@ -14,7 +14,7 @@ app = web.Application(client_max_size=Config.CLIENT_MAX_SIZE)
 
 handler = route_handler.RouteHandler()
 
-app.router.add_route('POST', '/v1/translate', handler.translate)
+app.router.add_post('/v1/translate', handler.translate)
 
 
 cors = aiohttp_cors.setup(app, defaults={

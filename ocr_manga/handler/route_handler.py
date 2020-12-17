@@ -19,24 +19,25 @@ class RouteHandler:
 
     async def translate(self, request):
         data = await request.post()
+        print("data: ", data)
 
-        # collect the image from the user
-        user_image = data['image'].file
+        # # collect the image from the user
+        # user_image = data['image'].file
 
-        if user_image is None:
-            return fail(INVALID_INPUT)
+        # if user_image is None:
+        #     return fail(INVALID_INPUT)
 
-        # read face content
-        uploaded_image_content = user_image.read()
+        # # read face content
+        # uploaded_image_content = user_image.read()
 
-        time_stamp = int(time.time())
-        images_directory = f'{OCRMangaConfig.CORE_DATA_DIR}/db'
+        # time_stamp = int(time.time())
+        # images_directory = f'{OCRMangaConfig.CORE_DATA_DIR}/db'
 
-        # store face images
-        file_name = f'{time_stamp}.jpg'
+        # # store face images
+        # file_name = f'{time_stamp}.jpg'
 
-        file_path = '/'.join([images_directory, file_name])
+        # file_path = '/'.join([images_directory, file_name])
 
-        store_content_to_file(uploaded_image_content, file_path)
+        # store_content_to_file(uploaded_image_content, file_path)
 
         return success({"response_data": "abc"})

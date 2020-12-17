@@ -5,9 +5,10 @@ google_trans_new==1.1.9
 pytest==6.2.0
 pytesseract==0.3.7
 matplotlib==3.3.3
-opencv_python==4.4.0.46
+opencv_python==4.1.2.30
 funcy==1.15
-aiohttp_cors==0.7.0
+aiohttp_cors
+tensorflow==1.15.2
 google_api_python_client==1.12.8
 Pillow==8.0.1
 PyQt5==5.15.2
