@@ -128,4 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-ocr_manga/tmp/
+ocr_manga/executables/

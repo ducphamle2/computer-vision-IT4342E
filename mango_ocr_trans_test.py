@@ -13,9 +13,13 @@ translator = google_translator()
 import tensorflow as tf
 import sys
 import os
-print("sickZil machine path: ", os.path.join(os.getcwd(), "ocr_manga/tmp/SickZil-Machine/src"))
-sys.path.append(os.path.join(os.getcwd(), "ocr_manga/tmp/SickZil-Machine/src"))
-import core     
+
+# path to the executable folder with Sickzil lib & images for editing
+executablePath=os.path.join(os.getcwd(), "ocr_manga/executables/")
+
+print("sickZil machine path: ", os.path.join(executablePath, "SickZil-Machine/src"))
+sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
+import core
 import imgio    #for ez img reading and writing 
 import utils.fp as fp
 import cv2
@@ -51,8 +55,7 @@ from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 #@title download from url
 
 #########################################working dir
-cwd = os.getcwd()
-mainTempFolder=os.path.join(cwd, "ocr_manga/tmp/tmp_images/")
+mainTempFolder=os.path.join(executablePath, "tmp_images/")
 textOnlyFolder=os.path.join(mainTempFolder, "textOnly/")
 inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")
 transalatedFolder=os.path.join(mainTempFolder, "translated/")
@@ -64,10 +67,9 @@ for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
 
 
 #############################################download jpg from site
-downloadFileList=glob.glob(os.getcwd() + "/ocr_manga/tmp/gallery-dl/*/*/*/*")
+downloadFileList=glob.glob(os.path.join(executablePath, "gallery-dl/*/*/*/*"))
 downloadFileList.sort()
-print(os.getcwd() + "/ocr_manga/tmp/gallery-dl/*/*")
-mangaName = os.path.basename(glob.glob(os.getcwd() + "/ocr_manga/tmp/gallery-dl/*/*")[0])
+mangaName = os.path.basename(glob.glob(os.path.join(executablePath, "gallery-dl/*/*"))[0])
 print(mangaName)
 print(downloadFileList)
 #print(os.path.basename(downloadFileList[0]))
@@ -84,8 +86,8 @@ def imgpath2mask(imgpath):
         imgio.segmap2mask)
 
 for i,imgPath in enumerate(tqdm(downloadFileList)):
-    fileName = os.path.basename(imgPath)
-    oriImage = imgio.load(imgPath, imgio.IMAGE)  #ori image
+    fileName=os.path.basename(imgPath)
+    oriImage = imgio.load(imgPath, imgio.IMAGE)                      #ori image
     # imgpath2mask(imgPath)
     # mask image is a black image with features (text) being white
     maskImage  = imgio.mask2segmap(imgpath2mask(imgPath))            #mask image
@@ -97,8 +99,8 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     # we need to convert to black color text for what ?
     # for easier reading and easier for oct algo to detect text
     textOnlyImage= cv2.bitwise_and(oriImage,maskImage)               #text only image
-    if i==0:
-      cv2.imshow("text_only_img", textOnlyImage)
+    #if i==0:
+      #cv2.imshow("text_only_img", textOnlyImage)
     textOnlyImage[maskImage==0] = 255                     
     imgio.save(inpaintedFolder+fileName, inpaintedImage)
     imgio.save(textOnlyFolder+fileName, textOnlyImage)
@@ -106,11 +108,11 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     #display
     #print tấm thứ 1
 
-    if i==0:
-        cv2.imshow("original_img", oriImage)
-        cv2.imshow("mask_img", maskImage)
-        cv2.imshow("inpainted_img", inpaintedImage)
-        cv2.imshow("text_only_img", textOnlyImage)
+    #if i==0:
+        #cv2.imshow("original_img", oriImage)
+        #cv2.imshow("mask_img", maskImage)
+        #cv2.imshow("inpainted_img", inpaintedImage)
+        #cv2.imshow("text_only_img", textOnlyImage)
 
 #@title detect text rectangle bound
 
@@ -166,7 +168,7 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     if i==0:
       for i in rectP:
         cv2.rectangle(img,i[:2],i[2:],(0,0,255))
-      cv2.imshow("texts with rectangles", img)
+      #cv2.imshow("texts with rectangles", img)
 
 #@title OCR and translate
 
@@ -230,9 +232,9 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
       # https://stackoverflow.com/questions/15589517/how-to-crop-an-image-in-opencv-using-python
       cropped = img[y1: y2, x1: x2]
       # put the cropped text box into the tesseract model to get string text
-      #text=getTextPytesseract(cropped)
+      text=getTextPytesseract(cropped)
       # text_nhocr=getTextNhocr(cropped,size=2)
-      text=detect_text_gg_vision(cropped)
+      #text=detect_text_gg_vision(cropped)
       # add the text into the text list to ready for translation
       textList+=[text]
     textListDict[fileName]=textList
@@ -309,5 +311,5 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     #display
     if i==0:
       im_oriText=drawText(inpaintedFolder+fileName,rect,textListDict[fileName],"ru",break_long_words=True)
-      cv2.imshow("original img", im_oriText)
-      cv2.imshow("translated img", im)
+      #cv2.imshow("original img", im_oriText)
+      #cv2.imshow("translated img", im)

@@ -1,6 +1,6 @@
-mkdir ocr_manga/tmp/
+mkdir ocr_manga/executables/
 
-cd ocr_manga/tmp/
+cd ocr_manga/executables/
 
 sudo apt-get install -y fonts-nanum fonts-thai-tlwg fonts-tibetan-machine fonts-kacst fonts-khmeros-core fonts-guru fonts-lao fonts-lklug-sinhala fonts-sil-padauk fonts-sil-abyssinica fonts-takao-pgothic  fonts-dejavu-core fonts-freefont-ttf fonts-liberation ttf-ubuntu-font-family
 
@@ -21,13 +21,9 @@ cp -rf cnet ../resource
 
 cp -rf snet ../resource
 
-pip install pipreqs
+# pip install -r requirements.txt
 
-pipreqs --force
+# pip install google_trans_new
 
-pip install -r requirements.txt
-
-pip install google_trans_new
-
-pip install gallery-dl
+# pip install gallery-dl
 
