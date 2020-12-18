@@ -9,6 +9,4 @@ pip install google-cloud-translate==2.0.1
 
 
 ######run these each time start terminal to use google cloud vision ocr
-cd ocr_manga/Credentials
-export GOOGLE_APPLICATION_CREDENTIALS="vision_key.json"
-cd ../..
+export GOOGLE_APPLICATION_CREDENTIALS="ocr_manga/Credentials/vision_key.json"
