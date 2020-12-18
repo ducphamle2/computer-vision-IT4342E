@@ -17,7 +17,7 @@ import os
 # path to the executable folder with Sickzil lib & images for editing
 executablePath=os.path.join(os.getcwd(), "ocr_manga/executables/")
 
-print("sickZil machine path: ", os.path.join(executablePath, "SickZil-Machine/src"))
+#print("sickZil machine path: ", os.path.join(executablePath, "SickZil-Machine/src"))
 sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
 import core
 import imgio    #for ez img reading and writing 
@@ -44,7 +44,9 @@ langCode=LANGUAGES[selectedLang]
 
 #@markdown ---
 #@markdown ### Enter url:
-url = "https://mangadex.org/chapter/826438" #@param {type:"string"}
+#url = input("Enter manga URL (https://mangadex.org/chapter/826437): ") 
+url = "https://mangadex.org/chapter/826437" #@param {type:"string"}
+ #@param {type:"string"}
 #@markdown ---
 
 
@@ -52,13 +54,34 @@ url = "https://mangadex.org/chapter/826438" #@param {type:"string"}
 import io
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 
+###############visionOCR
+GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
+from google.cloud import vision
+from google.cloud.vision_v1 import types
+import six
+from google.cloud import translate_v2 as translate
+
+translate_client = translate.Client()
+ocr_client = vision.ImageAnnotatorClient()
+
+
+
+
+
 #@title download from url
+
 
 #########################################working dir
 mainTempFolder=os.path.join(executablePath, "tmp_images/")
 textOnlyFolder=os.path.join(mainTempFolder, "textOnly/")
 inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")
 transalatedFolder=os.path.join(mainTempFolder, "translated/")
+
+#change working folder to ocr_manga/executables
+os.chdir(executablePath)
+#delete if exist
+# os.system("rm -r -f gallery-dl")
+# os.system("rm -r -f tmp_images")
 
 #create working dir
 for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
@@ -67,13 +90,21 @@ for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
 
 
 #############################################download jpg from site
+
+# print("\nDownload image")
+
+# #download img
+# sys_cmd = "gallery-dl " + url
+# os.system(sys_cmd)
+
+
 downloadFileList=glob.glob(os.path.join(executablePath, "gallery-dl/*/*/*/*"))
 downloadFileList.sort()
 mangaName = os.path.basename(glob.glob(os.path.join(executablePath, "gallery-dl/*/*"))[0])
-print(mangaName)
-print(downloadFileList)
+print("\nManga title: " + mangaName)
+#print(downloadFileList)
 #print(os.path.basename(downloadFileList[0]))
-Image.open(downloadFileList[0])
+#Image.open(downloadFileList[0])
 
 #@title image segmentation
 
@@ -85,6 +116,7 @@ def imgpath2mask(imgpath):
         core.segmap,
         imgio.segmap2mask)
 
+print("\nImage Segmentation")
 for i,imgPath in enumerate(tqdm(downloadFileList)):
     fileName=os.path.basename(imgPath)
     oriImage = imgio.load(imgPath, imgio.IMAGE)                      #ori image
@@ -120,6 +152,7 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
 #https://github.com/qzane/text-detection
 
 # images passed in are the text only images, with black texts and white background.
+print("\nText bound detection")
 def text_detect(img,ele_size=(8,2)): #
     if len(img.shape)==3:
         img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -161,7 +194,7 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     img = cv2.imread(textOnlyFolder+fileName)
     #0.011 = size of textbox detected relative to img size (eg 1920 * 0.011 x 1080 * 0.011)
     # why choose 0.011 ?
-    rectP,rect = text_detect(img,ele_size=(int(img.shape[1]*0.011),int(img.shape[0]*0.011)))  #x,y  20,25
+    rectP,rect = text_detect(img,ele_size=(int(img.shape[1]*0.02),int(img.shape[0]*0.02)))  #x,y  20,25
     # each file has a a 2D array, rectP - an array of rectangle padding & rect - an array of rectangles
     rectDict[fileName]=[rectP,rect]
     #display first page
@@ -173,6 +206,7 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
 #@title OCR and translate
 
 ###########################################ocr
+print("\nOCR")
 def filterText(inputText):
     inputText = re.sub('[\\\\+/§◎*)@<>#%(&=$_\-^:;«¢~「」〃ゝゞヽヾ一●▲・ヽ÷①↓®▽■◆『£〆∴∞▼™↑←]', '', inputText)   #remove special char
     inputText = ' '.join(inputText.split())    #remove whitespace
@@ -187,35 +221,56 @@ def getTextPytesseract(img):
     text_tesseract = filterText(text_tesseract)
     return text_tesseract
 
-# def getTextGoogleOcr(img):
-#     exceptionCount=0
-#     while exceptionCount<5:
-#         try:
-#             #https://tanaikech.github.io/2017/05/02/ocr-using-google-drive-api/
-#             txtPath = 'googleocr.txt'  # Text file outputted by OCR
-#             imgPath="googleocr.jpg"
-#             cv2.imwrite(imgPath, img)  
-#             mime = 'application/vnd.google-apps.document'
-#             res = service.files().create(
-#                 body={'name': imgPath,
-#                     'mimeType': mime },
-#                 media_body=MediaFileUpload(imgPath, mimetype=mime, resumable=True) ).execute()
-#             downloader = MediaIoBaseDownload(
-#                 io.FileIO(txtPath, 'wb'),
-#                 service.files().export_media(fileId=res['id'], mimeType="text/plain"))
-#             done = False
-#             while done is False:
-#                 status, done = downloader.next_chunk()
-#             service.files().delete(fileId=res['id']).execute()
-#             with  open(txtPath, "r") as f:   text_google = f.read()    #txt to str
-#             text_google=text_google.replace('\ufeff', '') 
-#             text_google=filterText(text_google)
-#         except:
-#             exceptionCount+=1
-#             continue
-#         break
+def getTextGoogleOcr(img):
+    exceptionCount=0
+    while exceptionCount<5:
+        try:
+            #https://tanaikech.github.io/2017/05/02/ocr-using-google-drive-api/
+            txtPath = 'googleocr.txt'  # Text file outputted by OCR
+            imgPath="googleocr.jpg"
+            cv2.imwrite(imgPath, img)  
+            mime = 'application/vnd.google-apps.document'
+            res = service.files().create(
+                body={'name': imgPath,
+                    'mimeType': mime },
+                media_body=MediaFileUpload(imgPath, mimetype=mime, resumable=True) ).execute()
+            downloader = MediaIoBaseDownload(
+                io.FileIO(txtPath, 'wb'),
+                service.files().export_media(fileId=res['id'], mimeType="text/plain"))
+            done = False
+            while done is False:
+                status, done = downloader.next_chunk()
+            service.files().delete(fileId=res['id']).execute()
+            with  open(txtPath, "r") as f:   text_google = f.read()    #txt to str
+            text_google=text_google.replace('\ufeff', '') 
+            text_google=filterText(text_google)
+        except:
+            exceptionCount+=1
+            continue
+        break
 
-#     return text_google
+    return text_google
+
+def getTextGoogleVisionOcr(img):
+    tmp_file = "tmp.png"
+    cv2.imwrite(tmp_file,img)
+    with io.open(tmp_file, 'rb') as image_file:
+        content = image_file.read()
+
+    image = types.Image(content=content)
+    response = ocr_client.text_detection(image=image)
+    texts = response.text_annotations
+    #cv2_imshow(img)
+    string = ''
+    for idx,text in enumerate(texts):
+        string+=' ' + text.description
+        break
+
+    string=string.replace('\ufeff', '') 
+    string=filterText(string)
+    os.remove(tmp_file)
+    #print(string)
+    return string
 
 textListDict=dict({})
 for i,imgPath in enumerate(tqdm(downloadFileList)):
@@ -233,6 +288,7 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
       cropped = img[y1: y2, x1: x2]
       # put the cropped text box into the tesseract model to get string text
       text=getTextPytesseract(cropped)
+      #text=getTextGoogleVisionOcr(cropped)
       # text_nhocr=getTextNhocr(cropped,size=2)
       #text=detect_text_gg_vision(cropped)
       # add the text into the text list to ready for translation
@@ -242,7 +298,9 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
 #####################translate
 textListDict_trans=dict({})
 
-# loop through the list of text lists collected above
+
+print("\nTranslate")
+#loop through the list of text lists collected above
 for i,imgPath in enumerate(tqdm(downloadFileList)):
     fileName=os.path.basename(imgPath)    
     textList=textListDict[fileName]
@@ -254,8 +312,8 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
         textList_trans+=[text_trans]
     textListDict_trans[fileName]=textList_trans
 
+
 #print text list obtain thru ocr
-print(textListDict)
 
 #@title draw text
 
@@ -268,18 +326,16 @@ def getFont(lang,size=25):
   return ImageFont.truetype(fontPath, size)
 
 
+print("\nDraw Text")
 #################draw text
 def drawText(imgPath,rect,textList,lang,break_long_words=False):
   img = Image.open(imgPath)
-  #fontSize=int(img.size[1]*0.008)
-  #imageFont=getFont(lang,fontSize)
-
   draw = ImageDraw.Draw(img)
   for text,(x,y,w,h)  in zip(textList,rect):
     if text=="": continue
     #dynamic fontsize scaling
     #fontsize = rect width * 0.13
-    fontSize = int(w * 0.13)
+    fontSize = int(w * 0.06)
     if(fontSize < 18): 
       fontSize = 18  
     imageFont=getFont(lang,fontSize)
@@ -300,7 +356,6 @@ def drawText(imgPath,rect,textList,lang,break_long_words=False):
         #draw text
         draw.text((x, y), line, font=imageFont, fill=(0, 0, 0))  #black
         y += imageFont.size+strokeSize
-
   return img
 
 for i,imgPath in enumerate(tqdm(downloadFileList)):
@@ -309,7 +364,7 @@ for i,imgPath in enumerate(tqdm(downloadFileList)):
     im=drawText(inpaintedFolder+fileName,rect,textListDict_trans[fileName],langCode)
     im.save(transalatedFolder+fileName) 
     #display
-    if i==0:
-      im_oriText=drawText(inpaintedFolder+fileName,rect,textListDict[fileName],"ru",break_long_words=True)
+    #if i==0:
+      #im_oriText=drawText(inpaintedFolder+fileName,rect,textListDict[fileName],"en",break_long_words=True)
       #cv2.imshow("original img", im_oriText)
       #cv2.imshow("translated img", im)
