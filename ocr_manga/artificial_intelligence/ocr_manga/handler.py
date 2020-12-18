@@ -205,7 +205,7 @@ class OCRMangaHandler:
     return img
 
   # given an url, this function will download the file and translate it
-  def translate(self, url):
+  def translate(self, url, lang):
 
     # TODO: Download the image from the url using urllib
     # urllib.request.urlretrieve('https://www.nationalgeographic.com/content/dam/animals/thumbs/rights-exempt/reptiles/g/green-anaconda_thumb.jpg', originalTextFolder + "img.jpg")
@@ -213,6 +213,7 @@ class OCRMangaHandler:
     # update the download file list after downloading the image
     self.downloadFileList=glob.glob(os.path.join(self.originalTextFolder, "*"))
     self.downloadFileList.sort()
+    self.langCode=self.LANGUAGES[lang]
 
     rectDict = dict()
     
@@ -306,5 +307,5 @@ class OCRMangaHandler:
 
 
 # run python class
-handler = OCRMangaHandler()
-handler.translate('')
+# handler = OCRMangaHandler()
+# handler.translate('')

@@ -19,7 +19,10 @@ class RouteHandler:
 
     async def translate(self, request):
         data = await request.post()
-        print("data: ", data)
+        print("data lang: ", data['lang'])
+        print("data url: ", data['url'])
+
+        self.ocr_manga_translator.translate(data['url'], data['lang'])
 
         # # collect the image from the user
         # user_image = data['image'].file
@@ -40,4 +43,4 @@ class RouteHandler:
 
         # store_content_to_file(uploaded_image_content, file_path)
 
-        return success({"response_data": "abc"})
+        return success({"status": 200})
