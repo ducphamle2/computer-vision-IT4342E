@@ -80,8 +80,8 @@ transalatedFolder=os.path.join(mainTempFolder, "translated/")
 #change working folder to ocr_manga/executables
 os.chdir(executablePath)
 #delete if exist
-# os.system("rm -r -f gallery-dl")
-# os.system("rm -r -f tmp_images")
+os.system("rm -r -f gallery-dl")
+os.system("rm -r -f tmp_images")
 
 #create working dir
 for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
@@ -93,9 +93,9 @@ for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
 
 # print("\nDownload image")
 
-# #download img
-# sys_cmd = "gallery-dl " + url
-# os.system(sys_cmd)
+#download img
+sys_cmd = "gallery-dl " + url
+os.system(sys_cmd)
 
 
 downloadFileList=glob.glob(os.path.join(executablePath, "gallery-dl/*/*/*/*"))

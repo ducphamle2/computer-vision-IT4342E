@@ -36,6 +36,12 @@ import io
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 import urllib.request
 
+########################### gooogle vision ocr
+GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
+from google.cloud import vision
+from google.cloud.vision_v1 import types
+ocr_client = vision.ImageAnnotatorClient()
+
 class OCRMangaHandler:
 
   selectedLang = 'vietnamese'
@@ -131,6 +137,27 @@ class OCRMangaHandler:
       text_tesseract = self.filterText(text_tesseract)
       return text_tesseract
 
+  def getTextGoogleVisionOcr(img):
+    tmp_file = "tmp.png"
+    cv2.imwrite(tmp_file,img)
+    with io.open(tmp_file, 'rb') as image_file:
+        content = image_file.read()
+
+    image = types.Image(content=content)
+    response = ocr_client.text_detection(image=image)
+    texts = response.text_annotations
+    #cv2_imshow(img)
+    string = ''
+    for idx,text in enumerate(texts):
+        string+=' ' + text.description
+        break
+
+    string=string.replace('\ufeff', '') 
+    string=filterText(string)
+    os.remove(tmp_file)
+    #print(string)
+    return string
+
 #@title draw text
 
   #################get font
@@ -153,7 +180,7 @@ class OCRMangaHandler:
       if text=="": continue
       #dynamic fontsize scaling
       #fontsize = rect width * 0.13
-      fontSize = int(w * 0.13)
+      fontSize = int(w * 0.06)
       if(fontSize < 18): 
         fontSize = 18  
       imageFont=self.getFont(lang,fontSize)
@@ -216,7 +243,7 @@ class OCRMangaHandler:
       img = cv2.imread(self.textOnlyFolder+fileName)
       #0.011 = size of textbox detected relative to img size (eg 1920 * 0.011 x 1080 * 0.011)
       # why choose 0.011 ?
-      rectP,rect = self.text_detect(img,ele_size=(int(img.shape[1]*0.011),int(img.shape[0]*0.011)))  #x,y  20,25
+      rectP,rect = self.text_detect(img,ele_size=(int(img.shape[1]*0.02),int(img.shape[0]*0.02)))  #x,y  20,25
       # each file has a a 2D array, rectP - an array of rectangle padding & rect - an array of rectangles
       rectDict[fileName]=[rectP,rect]
       #display first page
