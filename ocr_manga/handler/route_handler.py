@@ -22,7 +22,8 @@ class RouteHandler:
         print("data lang: ", data['lang'])
         print("data url: ", data['url'])
 
-        self.ocr_manga_translator.translate(data['url'], data['lang'])
+        #self.ocr_manga_translator.translate(data['url'], data['lang'])
+        self.ocr_manga_translator.translate('https://mangadex.org/chapter/826437', 'vietnamese')
 
         # # collect the image from the user
         # user_image = data['image'].file

@@ -15,7 +15,7 @@ import sys
 import os
 
 executablePath=os.path.join(os.getcwd(), "executables/")
-print("sickZil machine path: ", os.path.join(executablePath, "SickZil-Machine/src"))
+#print("sickZil machine path: ", os.path.join(executablePath, "SickZil-Machine/src"))
 sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
 import core
 import imgio    #for ez img reading and writing 
@@ -53,7 +53,6 @@ class OCRMangaHandler:
   #########################################working dir
   # path to the executable folder with Sickzil lib & images for editing
   mainTempFolder = os.path.join(executablePath, "tmp_images/")
-  originalTextFolder=os.path.join(mainTempFolder, "original/")
   textOnlyFolder=os.path.join(mainTempFolder, "textOnly/")
   inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")
   transalatedFolder = os.path.join(mainTempFolder, "translated/")
@@ -62,15 +61,14 @@ class OCRMangaHandler:
   downloadFileList = []
 
   def __init__(self):
+    #clean up old output folder
+    os.system("rm -r -f gallery-dl")
+    os.system("rm -r -f executable/tmp_images/")
+
     #create working dir
-    for filePath in [self.originalTextFolder, self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
+    for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
       if not os.path.exists(filePath):
         os.makedirs(filePath)
-    # need to update this list
-    #############################################download jpg from site
-    self.downloadFileList=glob.glob(os.path.join(self.originalTextFolder, "*"))
-    self.downloadFileList.sort()
-    print(self.downloadFileList)
 
   #@title image segmentation
 
@@ -207,17 +205,22 @@ class OCRMangaHandler:
   # given an url, this function will download the file and translate it
   def translate(self, url, lang):
 
-    # TODO: Download the image from the url using urllib
-    # urllib.request.urlretrieve('https://www.nationalgeographic.com/content/dam/animals/thumbs/rights-exempt/reptiles/g/green-anaconda_thumb.jpg', originalTextFolder + "img.jpg")
-    
+    # download img
+    print("\nDownload Image")
+    sys_cmd = "gallery-dl " + url
+    os.system(sys_cmd)
     # update the download file list after downloading the image
-    self.downloadFileList=glob.glob(os.path.join(self.originalTextFolder, "*"))
+    self.downloadFileList=downloadFileList=glob.glob("gallery-dl/*/*/*/*")
     self.downloadFileList.sort()
+    mangaName = os.path.basename(glob.glob(os.path.join("gallery-dl/*/*"))[0])
+    print("\nManga title: " + mangaName)
+
     self.langCode=self.LANGUAGES[lang]
 
     rectDict = dict()
     
     # image segmentation
+    print("\nImage Segmentation")
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
       fileName=os.path.basename(imgPath)
       oriImage = imgio.load(imgPath, imgio.IMAGE)                      #ori image
@@ -238,6 +241,8 @@ class OCRMangaHandler:
       imgio.save(self.inpaintedFolder+fileName, inpaintedImage)
       imgio.save(self.textOnlyFolder+fileName, textOnlyImage)
 
+
+    print("\nText bound detection")
     # enumerate through the list of text only images
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
       fileName=os.path.basename(imgPath)
@@ -253,6 +258,8 @@ class OCRMangaHandler:
           cv2.rectangle(img, i[:2], i[2:], (0, 0, 255))
           
     textListDict=dict({})
+
+    print("\nOCR")
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
       fileName=os.path.basename(imgPath)
       # read text only images
@@ -269,14 +276,15 @@ class OCRMangaHandler:
         # put the cropped text box into the tesseract model to get string text
         text=self.getTextPytesseract(cropped)
         # text_nhocr=getTextNhocr(cropped,size=2)
-        #text=detect_text_gg_vision(cropped)
+        #text=getTextGoogleVisionOcr(cropped)
         # add the text into the text list to ready for translation
         textList+=[text]
       textListDict[fileName]=textList
 
+
+    print("\nTranslate")
     #####################translate
     textListDict_trans=dict({})
-
     # loop through the list of text lists collected above
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
       fileName=os.path.basename(imgPath)    
@@ -290,16 +298,17 @@ class OCRMangaHandler:
       textListDict_trans[fileName]=textList_trans
 
     #print text list obtain thru ocr
-    print(textListDict)
+    #print(textListDict)
 
+    print("\nDraw Text")
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
       fileName=os.path.basename(imgPath)
       rectP,rect=rectDict[fileName]
       im=self.drawText(self.inpaintedFolder+fileName,rect,textListDict_trans[fileName],self.langCode)
       im.save(self.transalatedFolder+fileName) 
       #display
-      if i==0:
-        im_oriText=self.drawText(self.inpaintedFolder+fileName,rect,textListDict[fileName],"ru",break_long_words=True)
+      #if i==0:
+        #im_oriText=self.drawText(self.inpaintedFolder+fileName,rect,textListDict[fileName],"ru",break_long_words=True)
         #cv2.imshow("original img", im_oriText)
         #cv2.imshow("translated img", im)
 
@@ -307,5 +316,5 @@ class OCRMangaHandler:
 
 
 # run python class
-# handler = OCRMangaHandler()
-# handler.translate('')
+handler = OCRMangaHandler()
+handler.translate('https://mangadex.org/chapter/826437', 'vietnamese')

@@ -77,11 +77,9 @@ textOnlyFolder=os.path.join(mainTempFolder, "textOnly/")
 inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")
 transalatedFolder=os.path.join(mainTempFolder, "translated/")
 
-#change working folder to ocr_manga/executables
-os.chdir(executablePath)
 #delete if exist
 os.system("rm -r -f gallery-dl")
-os.system("rm -r -f tmp_images")
+os.system("rm -r -f executable/tmp_images/")
 
 #create working dir
 for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
