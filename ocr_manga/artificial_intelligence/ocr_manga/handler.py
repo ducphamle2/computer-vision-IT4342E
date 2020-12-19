@@ -136,7 +136,7 @@ class OCRMangaHandler:
       text_tesseract = self.filterText(text_tesseract)
       return text_tesseract
 
-  def getTextGoogleVisionOcr(img):
+  def getTextGoogleVisionOcr(self,img):
     tmp_file = "tmp.png"
     cv2.imwrite(tmp_file,img)
     with io.open(tmp_file, 'rb') as image_file:
@@ -279,7 +279,7 @@ class OCRMangaHandler:
           text=self.getTextPytesseract(cropped, srclang)
         # text_nhocr=getTextNhocr(cropped,size=2)
         else:
-          text=getTextGoogleVisionOcr(cropped)
+          text=self.getTextGoogleVisionOcr(cropped)
         # add the text into the text list to ready for translation
         textList+=[text]
       textListDict[fileName]=textList
