@@ -63,7 +63,7 @@ class OCRMangaHandler:
   def __init__(self):
     #clean up old output folder
     os.system("rm -r -f gallery-dl")
-    os.system("rm -r -f executable/tmp_images/")
+    os.system("rm -r -f executables/tmp_images/")
 
     #create working dir
     for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
@@ -126,12 +126,13 @@ class OCRMangaHandler:
       inputText = ' '.join(inputText.split())    #remove whitespace
       return inputText
 
-  def getTextPytesseract(self,img):
+  def getTextPytesseract(self,img,srclang):
+      if srclang == 'jp':
       #detect jpn
-      #text_tesseract = pytesseract.image_to_string(img, lang="jpn+jpn_vert+Japanese+Japanese_vert")                         #ocr jpn
-    
+        text_tesseract = pytesseract.image_to_string(img, lang="jpn+jpn_vert+Japanese+Japanese_vert")                         #ocr jpn
+      else:
       #detect eng
-      text_tesseract = pytesseract.image_to_string(img, lang="eng")
+        text_tesseract = pytesseract.image_to_string(img, lang="eng")
       text_tesseract = self.filterText(text_tesseract)
       return text_tesseract
 
@@ -203,18 +204,18 @@ class OCRMangaHandler:
     return img
 
   # given an url, this function will download the file and translate it
-  def translate(self, url, lang):
+  def translate(self, url, lang, ocr, srclang):
 
     # download img
     print("\nDownload Image")
     sys_cmd = "gallery-dl " + url
     os.system(sys_cmd)
     # update the download file list after downloading the image
-    self.downloadFileList=downloadFileList=glob.glob("gallery-dl/*/*/*/*")
+    self.downloadFileList=glob.glob("gallery-dl/**/*.jpg",recursive = True) + glob.glob("gallery-dl/**/*.png",recursive = True) + glob.glob("gallery-dl/**/*.jpeg",recursive = True)
+    #downloadFileList=glob.glob("gallery-dl/*/*/*/*")
     self.downloadFileList.sort()
     mangaName = os.path.basename(glob.glob(os.path.join("gallery-dl/*/*"))[0])
     print("\nManga title: " + mangaName)
-
     self.langCode=self.LANGUAGES[lang]
 
     rectDict = dict()
@@ -274,9 +275,11 @@ class OCRMangaHandler:
         # https://stackoverflow.com/questions/15589517/how-to-crop-an-image-in-opencv-using-python
         cropped = img[y1: y2, x1: x2]
         # put the cropped text box into the tesseract model to get string text
-        text=self.getTextPytesseract(cropped)
+        if ocr == 'tes':
+          text=self.getTextPytesseract(cropped, srclang)
         # text_nhocr=getTextNhocr(cropped,size=2)
-        #text=getTextGoogleVisionOcr(cropped)
+        else:
+          text=getTextGoogleVisionOcr(cropped)
         # add the text into the text list to ready for translation
         textList+=[text]
       textListDict[fileName]=textList

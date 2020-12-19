@@ -22,29 +22,11 @@ class RouteHandler:
         data = await request.post()
         fe.variabledecode.variable_decode(data, dict_char='.', list_char='-')
         print("data", data)
+        print("data srclang: ", data['srclang'])
         print("data lang: ", data['lang'])
         print("data url: ", data['url'])
+        print("data ocr: ", data['ocr'])
 
-        self.ocr_manga_translator.translate(data['url'], data['lang'])
-        #self.ocr_manga_translator.translate('https://mangadex.org/chapter/826437', 'vietnamese')
-
-        # # collect the image from the user
-        # user_image = data['image'].file
-
-        # if user_image is None:
-        #     return fail(INVALID_INPUT)
-
-        # # read face content
-        # uploaded_image_content = user_image.read()
-
-        # time_stamp = int(time.time())
-        # images_directory = f'{OCRMangaConfig.CORE_DATA_DIR}/db'
-
-        # # store face images
-        # file_name = f'{time_stamp}.jpg'
-
-        # file_path = '/'.join([images_directory, file_name])
-
-        # store_content_to_file(uploaded_image_content, file_path)
-
+        #self.ocr_manga_translator.translate(data['url'], data['lang'], data['ocr'], data['srclang'])
+        
         return success({"status": 200})
