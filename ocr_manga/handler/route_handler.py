@@ -2,6 +2,7 @@ import logging
 import time
 import re
 import hashlib
+import formencode as fe
 
 from includes.utils import *
 from const.message import *
@@ -19,11 +20,13 @@ class RouteHandler:
 
     async def translate(self, request):
         data = await request.post()
+        fe.variabledecode.variable_decode(data, dict_char='.', list_char='-')
+        print("data", data)
         print("data lang: ", data['lang'])
         print("data url: ", data['url'])
 
-        #self.ocr_manga_translator.translate(data['url'], data['lang'])
-        self.ocr_manga_translator.translate('https://mangadex.org/chapter/826437', 'vietnamese')
+        self.ocr_manga_translator.translate(data['url'], data['lang'])
+        #self.ocr_manga_translator.translate('https://mangadex.org/chapter/826437', 'vietnamese')
 
         # # collect the image from the user
         # user_image = data['image'].file
