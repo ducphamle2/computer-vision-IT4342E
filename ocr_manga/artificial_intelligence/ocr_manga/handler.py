@@ -37,10 +37,13 @@ from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 import urllib.request
 
 ########################### gooogle vision ocr
+from google.oauth2 import service_account
+credentials = service_account.Credentials.from_service_account_file('Credentials/vision_key.json')
+
 GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
 from google.cloud import vision
 from google.cloud.vision_v1 import types
-ocr_client = vision.ImageAnnotatorClient()
+ocr_client = vision.ImageAnnotatorClient(credentials=credentials)
 
 class OCRMangaHandler:
 
@@ -152,7 +155,7 @@ class OCRMangaHandler:
         break
 
     string=string.replace('\ufeff', '') 
-    string=filterText(string)
+    string=self.filterText(string)
     os.remove(tmp_file)
     #print(string)
     return string
