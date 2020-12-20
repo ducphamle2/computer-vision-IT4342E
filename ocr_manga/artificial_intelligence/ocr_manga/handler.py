@@ -323,5 +323,4 @@ class OCRMangaHandler:
 
 # run python class
 # handler = OCRMangaHandler()
->>>>>>> 90126ff9674b9ac4f9a8bdc851c0fcb63fb35c66
 # handler.translate('https://mangadex.org/chapter/826437', 'vietnamese')
