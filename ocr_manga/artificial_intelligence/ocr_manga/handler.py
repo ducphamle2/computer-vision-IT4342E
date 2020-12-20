@@ -205,6 +205,12 @@ class OCRMangaHandler:
 
   # given an url, this function will download the file and translate it
   def translate(self, url, lang, ocr, srclang):
+    os.system("rm -r -f gallery-dl")
+    os.system("rm -r -f executables/tmp_images/")
+
+    for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
+      if not os.path.exists(filePath):
+        os.makedirs(filePath)
 
     # download img
     print("\nDownload Image")
