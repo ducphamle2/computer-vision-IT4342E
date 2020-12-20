@@ -63,15 +63,18 @@ class OCRMangaHandler:
   # init downloadFileList class variable
   downloadFileList = []
 
-  def __init__(self):
-    #clean up old output folder
-    os.system("rm -r -f gallery-dl")
-    os.system("rm -r -f executables/tmp_images/")
+  # def __init__(self):
+  #   # #clean up old output folder
+  #   # os.system("rm -r -f gallery-dl")
+  #   # os.system("rm -r -f executables/tmp_images/")
+  #   # files = glob.glob("../../computer-vision-IT4342E-FE/src/components/tmp_images/*")
+  #   # for f in files:
+  #   #   os.remove(f)
 
-    #create working dir
-    for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
-      if not os.path.exists(filePath):
-        os.makedirs(filePath)
+  #   # #create working dir
+  #   # for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
+  #   #   if not os.path.exists(filePath):
+  #   #     os.makedirs(filePath)
 
   #@title image segmentation
 
@@ -208,9 +211,12 @@ class OCRMangaHandler:
 
   # given an url, this function will download the file and translate it
   def translate(self, url, lang, ocr, srclang):
-     #clean up old output folder
+    #clean up old output folder
     os.system("rm -r -f gallery-dl")
     os.system("rm -r -f executables/tmp_images/")
+    files = glob.glob("../../computer-vision-IT4342E-FE/src/components/tmp_images/*")
+    for f in files:
+      os.remove(f)
 
     #create working dir
     for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
@@ -319,6 +325,10 @@ class OCRMangaHandler:
       fileName=os.path.basename(imgPath)
       rectP,rect=rectDict[fileName]
       im=self.drawText(self.inpaintedFolder+fileName,rect,textListDict_trans[fileName],self.langCode)
+
+      # another translated folder
+      tranFolder= "../../computer-vision-IT4342E-FE/src/components/tmp_images/"
+      im.save(tranFolder+fileName)
       im.save(self.transalatedFolder+fileName) 
       #display
       #if i==0:
