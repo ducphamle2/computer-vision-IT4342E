@@ -37,10 +37,13 @@ from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 import urllib.request
 
 ########################### gooogle vision ocr
+from google.oauth2 import service_account
+credentials = service_account.Credentials.from_service_account_file('Credentials/vision_key.json')
+
 GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
 from google.cloud import vision
 from google.cloud.vision_v1 import types
-ocr_client = vision.ImageAnnotatorClient()
+ocr_client = vision.ImageAnnotatorClient(credentials=credentials)
 
 class OCRMangaHandler:
 
@@ -136,7 +139,7 @@ class OCRMangaHandler:
       text_tesseract = self.filterText(text_tesseract)
       return text_tesseract
 
-  def getTextGoogleVisionOcr(img):
+  def getTextGoogleVisionOcr(self,img):
     tmp_file = "tmp.png"
     cv2.imwrite(tmp_file,img)
     with io.open(tmp_file, 'rb') as image_file:
@@ -152,7 +155,7 @@ class OCRMangaHandler:
         break
 
     string=string.replace('\ufeff', '') 
-    string=filterText(string)
+    string=self.filterText(string)
     os.remove(tmp_file)
     #print(string)
     return string
@@ -205,12 +208,6 @@ class OCRMangaHandler:
 
   # given an url, this function will download the file and translate it
   def translate(self, url, lang, ocr, srclang):
-    os.system("rm -r -f gallery-dl")
-    os.system("rm -r -f executables/tmp_images/")
-
-    for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
-      if not os.path.exists(filePath):
-        os.makedirs(filePath)
 
     # download img
     print("\nDownload Image")
@@ -285,7 +282,7 @@ class OCRMangaHandler:
           text=self.getTextPytesseract(cropped, srclang)
         # text_nhocr=getTextNhocr(cropped,size=2)
         else:
-          text=getTextGoogleVisionOcr(cropped)
+          text=self.getTextGoogleVisionOcr(cropped)
         # add the text into the text list to ready for translation
         textList+=[text]
       textListDict[fileName]=textList
@@ -326,4 +323,5 @@ class OCRMangaHandler:
 
 # run python class
 # handler = OCRMangaHandler()
+>>>>>>> 90126ff9674b9ac4f9a8bdc851c0fcb63fb35c66
 # handler.translate('https://mangadex.org/chapter/826437', 'vietnamese')
