@@ -27,6 +27,6 @@ class RouteHandler:
         print("data url: ", data['url'])
         print("data ocr: ", data['ocr'])
 
-        self.ocr_manga_translator.translate(data['url'], data['lang'], data['ocr'], data['srclang'])
+        translated_list = self.ocr_manga_translator.translate(data['url'], data['lang'], data['ocr'], data['srclang'])
         
-        return success({"status": 200})
+        return success({"status": 200, "translated_list": translated_list})

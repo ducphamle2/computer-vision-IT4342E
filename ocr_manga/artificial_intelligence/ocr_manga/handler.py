@@ -1,21 +1,12 @@
-#https://github.com/KUR-creative/SickZil-Machine                      remove text
-#https://pypi.org/project/pytesseract/                                image to text
-#https://github.com/fireae/nhocr                                       image to text
-#https://pypi.org/project/googletrans/                                translator
 
-
-########################### translator
-#https://github.com/lushan88a/google_trans_new
 from google_trans_new import google_translator  
 translator = google_translator()
-
-# %tensorflow_version 1.x
 import tensorflow as tf
 import sys
 import os
+import requests
 
 executablePath=os.path.join(os.getcwd(), "executables/")
-#print("sickZil machine path: ", os.path.join(executablePath, "SickZil-Machine/src"))
 sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
 import core
 import imgio    #for ez img reading and writing 
@@ -48,6 +39,8 @@ ocr_client = vision.ImageAnnotatorClient(credentials=credentials)
 class OCRMangaHandler:
 
   selectedLang = 'vietnamese'
+
+  translated_list = []
 
   LANGUAGES = {'afrikaans': 'af', 'albanian': 'sq', 'amharic': 'am', 'arabic': 'ar', 'armenian': 'hy', 'azerbaijani': 'az', 'basque': 'eu', 'belarusian': 'be', 'bengali': 'bn', 'bosnian': 'bs', 'bulgarian': 'bg', 'catalan': 'ca', 'cebuano': 'ceb', 'chichewa': 'ny', 'chinese (simplified)': 'zh-cn', 'chinese (traditional)': 'zh-tw', 'corsican': 'co', 'croatian': 'hr', 'czech': 'cs', 'danish': 'da', 'dutch': 'nl', 'english': 'en', 'esperanto': 'eo', 'estonian': 'et', 'filipino': 'tl', 'finnish': 'fi', 'french': 'fr', 'frisian': 'fy', 'galician': 'gl', 'georgian': 'ka', 'german': 'de', 'greek': 'el', 'gujarati': 'gu', 'haitian creole': 'ht', 'hausa': 'ha', 'hawaiian': 'haw', 'hebrew': 'iw', 'hindi': 'hi', 'hmong': 'hmn', 'hungarian': 'hu', 'icelandic': 'is', 'igbo': 'ig', 'indonesian': 'id', 'irish': 'ga', 'italian': 'it', 'japanese': 'ja', 'javanese': 'jw', 'kannada': 'kn', 'kazakh': 'kk', 'khmer': 'km', 'korean': 'ko', 'kurdish (kurmanji)': 'ku', 'kyrgyz': 'ky', 'lao': 'lo', 'latin': 'la', 'latvian': 'lv', 'lithuanian': 'lt', 'luxembourgish': 'lb', 'macedonian': 'mk', 'malagasy': 'mg', 'malay': 'ms', 'malayalam': 'ml', 'maltese': 'mt', 'maori': 'mi', 'marathi': 'mr', 'mongolian': 'mn', 'myanmar (burmese)': 'my', 'nepali': 'ne', 'norwegian': 'no', 'pashto': 'ps', 'persian': 'fa', 'polish': 'pl', 'portuguese': 'pt', 'punjabi': 'pa', 'romanian': 'ro', 'russian': 'ru', 'samoan': 'sm', 'scots gaelic': 'gd', 'serbian': 'sr', 'sesotho': 'st', 'shona': 'sn', 'sindhi': 'sd', 'sinhala': 'si', 'slovak': 'sk', 'slovenian': 'sl', 'somali': 'so', 'spanish': 'es', 'sundanese': 'su', 'swahili': 'sw', 'swedish': 'sv', 'tajik': 'tg', 'tamil': 'ta', 'telugu': 'te', 'thai': 'th', 'turkish': 'tr', 'ukrainian': 'uk', 'urdu': 'ur', 'uzbek': 'uz', 'vietnamese': 'vi', 'welsh': 'cy', 'xhosa': 'xh', 'yiddish': 'yi', 'yoruba': 'yo', 'zulu': 'zu'}
 
@@ -222,6 +215,9 @@ class OCRMangaHandler:
     for filePath in [self.textOnlyFolder, self.inpaintedFolder,self.transalatedFolder]:
       if not os.path.exists(filePath):
         os.makedirs(filePath)
+
+    # reset the list
+    self.translated_list = []
         
     # download img
     print("\nDownload Image")
@@ -329,16 +325,18 @@ class OCRMangaHandler:
       # another translated folder
       tranFolder= "../../computer-vision-IT4342E-FE/src/components/tmp_images/"
       im.save(tranFolder+fileName)
-      im.save(self.transalatedFolder+fileName) 
-      #display
-      #if i==0:
-        #im_oriText=self.drawText(self.inpaintedFolder+fileName,rect,textListDict[fileName],"ru",break_long_words=True)
-        #cv2.imshow("original img", im_oriText)
-        #cv2.imshow("translated img", im)
+      im.save(self.transalatedFolder + fileName)
 
-  # need to return something here for the user
+      files = {'media': open(self.transalatedFolder + fileName, 'rb')}
 
+      res = requests.post("http://164.90.180.95:5001/api/v0/add", files=files)
+
+      print("res: ", res.json())
+
+      self.translated_list.append(res.json()['Hash'])
+
+    return self.translated_list
 
 # run python class
 # handler = OCRMangaHandler()
-# handler.translate('https://mangadex.org/chapter/826437', 'vietnamese')
+# handler.translate('https://mangakakalot.com/chapter/xk923531/chapter_257', 'vietnamese', 'Tesseract', 'English')
