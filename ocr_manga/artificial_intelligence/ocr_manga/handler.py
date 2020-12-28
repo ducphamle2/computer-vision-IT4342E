@@ -152,5 +152,5 @@ class OCRMangaHandler:
     return self.translated_list
 
 # run python class
-handler = OCRMangaHandler()
-handler.translate('https://mangakakalot.com/chapter/xk923531/chapter_257', 'vietnamese', 'Tesseract', 'English')
+# handler = OCRMangaHandler()
+# handler.translate('https://mangakakalot.com/chapter/xk923531/chapter_257', 'vietnamese', 'Tesseract', 'English')
