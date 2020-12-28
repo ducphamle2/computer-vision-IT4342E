@@ -1,45 +1,14 @@
-
-from google_trans_new import google_translator  
-translator = google_translator()
-import tensorflow as tf
 import sys
 import os
 import requests
-
-executablePath=os.path.join(os.getcwd(), "executables/")
-sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
-import core
-import imgio    #for ez img reading and writing 
-import utils.fp as fp
-import cv2
-
-########################### tesseract ocr
-import pytesseract
 import glob                                    #list path
-from PIL import Image, ImageFont, ImageDraw   #draw text
-import textwrap                               #draw text
 from tqdm import tqdm                         #progressbar when run loop
-from matplotlib import pyplot as plt
-import re                 #regex       
-from pdb import set_trace   #debug
-import numpy as np
-import io
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
-import urllib.request
-
-########################### gooogle vision ocr
-from google.oauth2 import service_account
-credentials = service_account.Credentials.from_service_account_file('Credentials/vision_key.json')
-
-GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
-from google.cloud import vision
-from google.cloud.vision_v1 import types
-from segmentation import ImageSegmentation
-from detector import TextDetector
-from ocr import TextOCR
-from translator import Translator
-from drawer import MangaDrawer
-ocr_client = vision.ImageAnnotatorClient(credentials=credentials)
+from artificial_intelligence.ocr_manga.segmentation import ImageSegmentation
+from artificial_intelligence.ocr_manga.detector import TextDetector
+from artificial_intelligence.ocr_manga.ocr_file import TextOCR
+from artificial_intelligence.ocr_manga.translator import Translator
+from artificial_intelligence.ocr_manga.drawer import MangaDrawer
 
 class OCRMangaHandler:
 
@@ -53,6 +22,7 @@ class OCRMangaHandler:
 
   #########################################working dir
   # path to the executable folder with Sickzil lib & images for editing
+  executablePath=os.path.join(os.getcwd(), "executables/")
   mainTempFolder = os.path.join(executablePath, "tmp_images/")
   textOnlyFolder=os.path.join(mainTempFolder, "textOnly/")
   inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")

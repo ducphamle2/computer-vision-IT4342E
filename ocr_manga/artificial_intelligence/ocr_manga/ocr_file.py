@@ -1,31 +1,10 @@
-
-from google_trans_new import google_translator  
-translator = google_translator()
-import tensorflow as tf
-import sys
 import os
-import requests
-
-executablePath=os.path.join(os.getcwd(), "executables/")
-sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
-import core
-import imgio    #for ez img reading and writing 
-import utils.fp as fp
 import cv2
 
 ########################### tesseract ocr
 import pytesseract
-import glob                                    #list path
-from PIL import Image, ImageFont, ImageDraw   #draw text
-import textwrap                               #draw text
-from tqdm import tqdm                         #progressbar when run loop
-from matplotlib import pyplot as plt
-import re                 #regex       
-from pdb import set_trace   #debug
-import numpy as np
+import re                 #regex 
 import io
-from apiclient.http import MediaFileUpload, MediaIoBaseDownload
-import urllib.request
 
 ########################### gooogle vision ocr
 from google.oauth2 import service_account
@@ -34,8 +13,6 @@ credentials = service_account.Credentials.from_service_account_file('Credentials
 GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
 from google.cloud import vision
 from google.cloud.vision_v1 import types
-import segmentation as ImageSegmentation
-import detector as TextDetector
 ocr_client = vision.ImageAnnotatorClient(credentials=credentials)
 
 class TextOCR:

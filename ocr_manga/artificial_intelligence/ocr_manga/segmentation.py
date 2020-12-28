@@ -1,19 +1,13 @@
 import os
+import sys
+import os
+executablePath=os.path.join(os.getcwd(), "executables/")
+sys.path.append(os.path.join(executablePath, "SickZil-Machine/src"))
 import core
 import imgio    #for ez img reading and writing 
 import utils.fp as fp
 import cv2
-
-from PIL import Image, ImageFont, ImageDraw   #draw text
-import textwrap                               #draw text
-from tqdm import tqdm                         #progressbar when run loop
-from matplotlib import pyplot as plt
-import re                 #regex       
-from pdb import set_trace   #debug
-import numpy as np
-import io
-from apiclient.http import MediaFileUpload, MediaIoBaseDownload
-import urllib.request
+from tqdm import tqdm                         #progressbar when run loop    
 
 
 class ImageSegmentation:
