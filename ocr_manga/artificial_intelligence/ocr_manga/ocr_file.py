@@ -54,7 +54,7 @@ class TextOCR:
         #print(string)
         return string
 
-    def textToString(self, textOnlyFolder, imgPath, rectDict, ocr):
+    def textToString(self, textOnlyFolder, imgPath, rectDict, ocr, srclang):
         fileName=os.path.basename(imgPath)
         # read text only images
         img = cv2.imread(textOnlyFolder+fileName)
