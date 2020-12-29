@@ -55,14 +55,13 @@ import io
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 
 ###############visionOCR
+from google.oauth2 import service_account
+credentials = service_account.Credentials.from_service_account_file('ocr_manga/Credentials/vision_key.json')
+
 GOOGLE_CLOUD_PROJECT = 'comvis-manga-translator'
 from google.cloud import vision
 from google.cloud.vision_v1 import types
-import six
-from google.cloud import translate_v2 as translate
-
-translate_client = translate.Client()
-ocr_client = vision.ImageAnnotatorClient()
+ocr_client = vision.ImageAnnotatorClient(credentials=credentials)
 
 
 
@@ -78,8 +77,8 @@ inpaintedFolder=os.path.join(mainTempFolder,"inpainted/")
 transalatedFolder=os.path.join(mainTempFolder, "translated/")
 
 #delete if exist
-os.system("rm -r -f gallery-dl")
-os.system("rm -r -f executable/tmp_images/")
+# os.system("rm -r -f gallery-dl")
+# os.system("rm -r -f executable/tmp_images/")
 
 #create working dir
 for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
@@ -92,8 +91,8 @@ for filePath in [textOnlyFolder,inpaintedFolder,transalatedFolder]:
 # print("\nDownload image")
 
 #download img
-sys_cmd = "gallery-dl " + url
-os.system(sys_cmd)
+# sys_cmd = "gallery-dl " + url
+# os.system(sys_cmd)
 
 
 downloadFileList=glob.glob(os.path.join(executablePath, "gallery-dl/*/*/*/*"))

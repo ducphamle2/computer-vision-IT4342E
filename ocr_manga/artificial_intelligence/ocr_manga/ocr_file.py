@@ -54,8 +54,7 @@ class TextOCR:
         #print(string)
         return string
 
-    def textToString(self, textOnlyFolder, imgPath, rectDict, ocr, srclang):
-        fileName=os.path.basename(imgPath)
+    def textToString(self, textOnlyFolder, fileName, rectDict, ocr, srclang):
         # read text only images
         img = cv2.imread(textOnlyFolder+fileName)
         # why use this to remove noise not Gauss or mean filter ?

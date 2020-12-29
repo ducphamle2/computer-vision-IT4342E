@@ -5,8 +5,7 @@ import cv2
 
 class Translator:
 
-    def translateText(self, imgPath, textListDict, langCode):
-        fileName=os.path.basename(imgPath)    
+    def translateText(self, fileName, textListDict, langCode):
         textList=textListDict[fileName]
         textList_trans=[]
         for text in textList:

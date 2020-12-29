@@ -92,7 +92,8 @@ class OCRMangaHandler:
     print("\nOCR")
     ocrText = TextOCR()
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
-      textList = ocrText.textToString(self.textOnlyFolder, imgPath, rectDict, ocr, srclang)
+      fileName=os.path.basename(imgPath)
+      textList = ocrText.textToString(self.textOnlyFolder, fileName, rectDict, ocr, srclang)
       textListDict[fileName]=textList
 
     print("\nTranslate")
@@ -101,7 +102,8 @@ class OCRMangaHandler:
     trans = Translator() 
     # loop through the list of text lists collected above
     for i,imgPath in enumerate(tqdm(self.downloadFileList)):
-      textList_trans = trans.translateText(imgPath, textListDict, self.langCode)
+      fileName=os.path.basename(imgPath)
+      textList_trans = trans.translateText(fileName, textListDict, self.langCode)
       textListDict_trans[fileName]=textList_trans
 
     #print text list obtain thru ocr

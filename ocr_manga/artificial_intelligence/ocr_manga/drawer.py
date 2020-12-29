@@ -56,7 +56,7 @@ class MangaDrawer:
 
         # another translated folder
         tranFolder= "../../computer-vision-IT4342E-FE/src/components/tmp_images/"
-        im.save(tranFolder+fileName)
+        #im.save(tranFolder+fileName)
         im.save(transalatedFolder + fileName)
 
         files = {'media': open(transalatedFolder + fileName, 'rb')}
