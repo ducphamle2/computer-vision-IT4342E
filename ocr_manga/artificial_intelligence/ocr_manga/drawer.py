@@ -25,8 +25,8 @@ class MangaDrawer:
             #dynamic fontsize scaling
             #fontsize = rect width * 0.13
             fontSize = int(w * 0.06)
-            if(fontSize < 18): 
-                fontSize = 18  
+            if(fontSize < 15): 
+                fontSize = 15 
             imageFont=self.getFont(lang,fontSize)
             for line in textwrap.wrap(text, width=w//imageFont.size+4,break_long_words=break_long_words):   #split text to fit into box
                 #text stroke
